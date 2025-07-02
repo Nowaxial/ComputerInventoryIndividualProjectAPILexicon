@@ -46,8 +46,8 @@ namespace ComputerInventory.Data.Data
                     _ => "WORKSTATION"
                 };
 
-                c.Address = $"{f.Address.StreetAddress()}, {f.Address.City()}";
-                c.Country = f.Address.Country();
+                c.Address = f.Address.StreetAddress();
+                c.City = f.Address.City();
                 c.Users = users;
                 c.Name = f.Company.CompanyName();
             });

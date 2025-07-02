@@ -1,5 +1,7 @@
 ﻿using ComputerInventory.API.Extensions;
+using ComputerInventory.Core.Repositories;
 using ComputerInventory.Data.Data;
+using ComputerInventory.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace ComputerInventory.API
@@ -17,6 +19,7 @@ namespace ComputerInventory.API
             builder.Services.AddControllers(opt => opt.ReturnHttpNotAcceptable = true)
                 .AddNewtonsoftJson()
                 .AddXmlDataContractSerializerFormatters();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

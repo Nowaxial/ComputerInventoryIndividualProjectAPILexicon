@@ -1,4 +1,5 @@
 ﻿using ComputerInventory.Core.Entities;
+using ComputerInventory.Core.Repositories;
 using ComputerInventory.Data.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,25 +10,27 @@ namespace ComputerInventory.API.Controllers
     [ApiController]
     public class InventoriesController : ControllerBase
     {
-        private readonly ComputerInventoryContext _context;
+        //private readonly ComputerInventoryContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public InventoriesController(ComputerInventoryContext context)
+        public InventoriesController(IUnitOfWork unitOfWork)
         {
-            _context = context;
+           
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/Inventories
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Inventory>>> GetInventory()
+        public async Task<IEnumerable<Inventory>> GetInventory()
         {
-            return await _context.Inventories.ToListAsync();
+            return await _unitOfWork.InventoryRepository.GetAllAsync();
         }
 
         // GET: api/Inventories/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Inventory>> GetInventory(int id)
         {
-            var inventory = await _context.Inventories.FindAsync(id);
+            var inventory = await _unitOfWork.InventoryRepository.GetAsync(id);
 
             if (inventory == null)
             {
@@ -47,11 +50,11 @@ namespace ComputerInventory.API.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(inventory).State = EntityState.Modified;
+            _unitOfWork.InventoryRepository.Update(inventory);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _unitOfWork.CompleteAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -73,8 +76,9 @@ namespace ComputerInventory.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Inventory>> PostInventory(Inventory inventory)
         {
-            _context.Inventories.Add(inventory);
-            await _context.SaveChangesAsync();
+            _unitOfWork.InventoryRepository.Add(inventory);
+            await _unitOfWork.CompleteAsync();
+            
 
             return CreatedAtAction("GetInventory", new { id = inventory.Id }, inventory);
         }
@@ -83,21 +87,21 @@ namespace ComputerInventory.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteInventory(int id)
         {
-            var inventory = await _context.Inventories.FindAsync(id);
+            var inventory = await _unitOfWork.InventoryRepository.GetAsync(id);
             if (inventory == null)
             {
                 return NotFound();
             }
 
-            _context.Inventories.Remove(inventory);
-            await _context.SaveChangesAsync();
+            _unitOfWork.InventoryRepository.Remove(inventory);
+            await _unitOfWork.CompleteAsync();
 
             return NoContent();
         }
 
         private bool InventoryExists(int id)
         {
-            return _context.Inventories.Any(e => e.Id == id);
+            return _unitOfWork.InventoryRepository.Equals(id);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using ComputerInventory.Core.Entities;
+using ComputerInventory.Core.Repositories;
 using ComputerInventory.Data.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,25 +10,25 @@ namespace ComputerInventory.API.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly ComputerInventoryContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UsersController(ComputerInventoryContext context)
+        public UsersController(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUser()
+        public async Task<IEnumerable<User>> GetUser()
         {
-            return await _context.Users.ToListAsync();
+            return await _unitOfWork.UserRepository.GetAllAsync();
         }
 
         // GET: api/Users/5
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _unitOfWork.UserRepository.GetAsync(id);
 
             if (user == null)
             {
@@ -47,11 +48,11 @@ namespace ComputerInventory.API.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(user).State = EntityState.Modified;
+            _unitOfWork.UserRepository.Update(user);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _unitOfWork.CompleteAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -73,8 +74,8 @@ namespace ComputerInventory.API.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            _unitOfWork.UserRepository.Add(user);
+            await _unitOfWork.CompleteAsync();
 
             return CreatedAtAction("GetUser", new { id = user.Id }, user);
         }
@@ -83,21 +84,21 @@ namespace ComputerInventory.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _unitOfWork.UserRepository.GetAsync(id);
             if (user == null)
             {
                 return NotFound();
             }
 
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
+            _unitOfWork.UserRepository.Remove(user);
+            await _unitOfWork.CompleteAsync();
 
             return NoContent();
         }
 
         private bool UserExists(int id)
         {
-            return _context.Users.Any(e => e.Id == id);
+            return _unitOfWork.UserRepository.Equals(id);
         }
     }
 }
