@@ -10,7 +10,7 @@ namespace ComputerInventory.Core.Repositories
     public interface IUserRepository
     {
         Task<IEnumerable<User>> GetAllAsync();
-        Task<User?> GetAsync(int id);
+        Task<User?> GetAsync(int id, int inventoryId);
         Task<bool> AnyAsync(int id);
         void Add(User user);
         void Update(User user);

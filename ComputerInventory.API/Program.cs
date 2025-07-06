@@ -19,7 +19,11 @@ namespace ComputerInventory.API
             builder.Services.AddControllers(opt => opt.ReturnHttpNotAcceptable = true)
                 .AddNewtonsoftJson()
                 .AddXmlDataContractSerializerFormatters();
+
+
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            builder.Services.AddAutoMapper(typeof(ComputerInventoryMappings));
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

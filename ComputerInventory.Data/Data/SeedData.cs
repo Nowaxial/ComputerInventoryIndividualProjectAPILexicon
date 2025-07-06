@@ -30,7 +30,7 @@ namespace ComputerInventory.Data.Data
             var faker = new Faker<Inventory>("sv").Rules((f, c) =>
             {
                 // Slumpa antal användare
-                int userCount = f.Random.Int(min: 2, max: 10);
+                int userCount = 5;
                 var users = GenerateUsers(userCount);
 
                 // Slumpa en användare för att bestämma datornamn
@@ -65,36 +65,61 @@ namespace ComputerInventory.Data.Data
                 e.Email = f.Person.Email;
                 e.Position = f.PickRandom(positions);
 
-                string computerPrefix = e.Position switch
-                {
-                    "Developer" => "DEV",
-                    "Admin" => "ADMIN",
-                    "Manager" => "MGR",
-                    "Office" => "OFF",
-                    _ => "WORKSTATION"
-                };
+                //string computerPrefix = e.Position switch
+                //{
+                //    "Developer" => "DEV",
+                //    "Admin" => "ADMIN",
+                //    "Manager" => "MGR",
+                //    "Office" => "OFF",
+                //    _ => "WORKSTATION"
+                //};
 
-                e.ComputerName = GenerateComputerName(computerPrefix);
-                e.MAC = f.Internet.Mac();
-                e.IP = f.Internet.IpAddress().ToString();
+
+                //e.MAC = f.Internet.Mac();
+                //e.IP = f.Internet.IpAddress().ToString();
+                e.ComputerName = GenerateComputerName(e.Position, e.Name);
             });
 
             return faker.Generate(nrOfUsers);
         }
 
         // Hjälpmetod för att generera slumpmässiga datornamn med prefix
-        private static string GenerateComputerName(string prefix)
+        //private static string GenerateComputerName(string prefix)
+        //{
+        //    const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        //    var random = new Random();
+        //    var suffix = new char[7];
+
+        //    for (int i = 0; i < suffix.Length; i++)
+        //    {
+        //        suffix[i] = chars[random.Next(chars.Length)];
+        //    }
+
+        //    return $"{prefix}-{new string(suffix)}";
+        //}
+
+        //Jag vill få  denna att generera datornamn baserat på position och namn men namnet ska innehålla mer än 3 tecken
+
+        private static string GenerateComputerName(string position, string name)
         {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            var random = new Random();
-            var suffix = new char[7];
-
-            for (int i = 0; i < suffix.Length; i++)
+            string prefix = position switch
             {
-                suffix[i] = chars[random.Next(chars.Length)];
-            }
+                "Developer" => "DEV",
+                "Admin" => "ADMIN",
+                "Manager" => "MGR",
+                "Office" => "OFF",
+                _ => "WORKSTATION"
+            };
 
-            return $"{prefix}-{new string(suffix)}";
+            var nameParts = name.Split(' ');
+            string firstName = nameParts.Length > 0 && nameParts[0].Length >= 3
+                ? nameParts[0].Substring(0, 3)
+                : "Usr";
+            string lastName = nameParts.Length > 1 && nameParts[1].Length >= 3
+                ? nameParts[1].Substring(0, 3)
+                : "Usr";
+
+            return $"{prefix}-{firstName}{lastName}";
         }
     }
 }

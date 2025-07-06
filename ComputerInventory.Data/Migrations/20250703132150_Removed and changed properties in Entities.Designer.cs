@@ -4,6 +4,7 @@ using ComputerInventory.Data.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ComputerInventory.Data.Migrations
 {
     [DbContext(typeof(ComputerInventoryContext))]
-    partial class ComputerInventoryContextModelSnapshot : ModelSnapshot
+    [Migration("20250703132150_Removed and changed properties in Entities")]
+    partial class RemovedandchangedpropertiesinEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,7 +47,7 @@ namespace ComputerInventory.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Inventories", (string)null);
+                    b.ToTable("Inventories");
                 });
 
             modelBuilder.Entity("ComputerInventory.Core.Entities.User", b =>
@@ -77,7 +80,7 @@ namespace ComputerInventory.Data.Migrations
 
                     b.HasIndex("InventoryId");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("ComputerInventory.Core.Entities.User", b =>

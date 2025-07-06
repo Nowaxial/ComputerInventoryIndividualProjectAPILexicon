@@ -29,7 +29,7 @@ namespace ComputerInventory.Data.Repositories
             return await _context.Users.ToListAsync();
         }
 
-        public async Task<User?> GetAsync(int id)
+        public async Task<User?> GetAsync(int id, int inventoryId)
         {
             return await _context.Users.SingleOrDefaultAsync(u => u.Id == id);
         }
