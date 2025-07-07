@@ -11,13 +11,15 @@ namespace ComputerInventory.Core.DTOs
     {
         [Required(ErrorMessage = " Name is a required field.")]
         [MaxLength(30, ErrorMessage = "Maximum length for the Name is 30 characters.")]
-        public string Name { get; set; }
-        public string? Position { get; set; }
+        public string Name { get; init; }
+
+        public string? Position { get; init; }
 
         [Required(ErrorMessage = "Email is a required field.")]
         [MaxLength(30, ErrorMessage = "Maximum length for the Email is 30 characters.")]
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
-        public string Email { get; set; }
-        public string? ComputerName { get; set; }
+        public string Email { get; init; }
+
+        public string? ComputerName { get; init; }
     }
 }

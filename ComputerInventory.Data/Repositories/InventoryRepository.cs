@@ -23,9 +23,11 @@ namespace ComputerInventory.Data.Repositories
             return await _context.Inventories.AnyAsync(i => i.Id == id);
         }
 
-        public async Task<IEnumerable<Inventory>> GetAllAsync()
+        public async Task<IEnumerable<Inventory>> GetAllAsync(bool includeUsers = false)
         {
-            return await _context.Inventories.ToListAsync();
+            return includeUsers
+                ? await _context.Inventories.Include(u => u.Users).ToListAsync()
+                : await _context.Inventories.ToListAsync();
         }
 
         public async Task<Inventory?> GetAsync(int id)

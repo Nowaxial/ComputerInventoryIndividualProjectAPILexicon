@@ -9,7 +9,7 @@ namespace ComputerInventory.Core.Repositories
 {
     public interface IInventoryRepository
     {
-        Task<IEnumerable<Inventory>> GetAllAsync();
+        Task<IEnumerable<Inventory>> GetAllAsync(bool includeUsers = false);
         Task<Inventory?> GetAsync(int id);
         Task<bool> AnyAsync(int id);
         void Add(Inventory inventory); 

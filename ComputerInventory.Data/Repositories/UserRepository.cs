@@ -22,6 +22,7 @@ namespace ComputerInventory.Data.Repositories
         public Task<bool> AnyAsync(int id)
         {
             return _context.Users.AnyAsync(u => u.Id == id);
+            
         }
 
         public async Task<IEnumerable<User>> GetAllAsync()
