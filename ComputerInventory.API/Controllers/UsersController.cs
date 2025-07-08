@@ -35,10 +35,9 @@ namespace ComputerInventory.API.Controllers
             return Ok(userDto);
 
         }
-
         // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserGetDTO>> GetUser(int id, int inventoryId)
+        public async Task<ActionResult<UserGetDTO>> GetUser(int id)
         {
             //var user = await _unitOfWork.UserRepository.GetAsync(id);
 
@@ -59,7 +58,7 @@ namespace ComputerInventory.API.Controllers
             //}
             //return Ok(user);
 
-            var user = _mapper.Map<UserGetDTO>(await _unitOfWork.UserRepository.GetAsync(id, inventoryId));
+            var user = _mapper.Map<UserGetDTO>(await _unitOfWork.UserRepository.GetAsync(id));
             if (user == null)
             {
                 return NotFound("User doesn't exist");
@@ -70,11 +69,22 @@ namespace ComputerInventory.API.Controllers
             }
             return Ok(user);
         }
+        // GET: api/Users
+        [HttpGet("search/{name}")]
+        public async Task<ActionResult<UserGetDTO>> GetUserByName(string name)
+        {
+            var user = _mapper.Map<UserGetDTO>(await _unitOfWork.UserRepository.GetByNameAsync(name));
+            if (user == null)
+            {
+                return NotFound("User doesn't exist");
+            }
+            return Ok(user);
+        }
 
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, UserUpdateDTO dto, int inventoryId)
+        public async Task<IActionResult> PutUser(int id, UserUpdateDTO dto)
         {
             //if (id != user.Id)
             //{
@@ -110,7 +120,7 @@ namespace ComputerInventory.API.Controllers
 
             //return NoContent();
 
-            var existingUser = await _unitOfWork.UserRepository.GetAsync(id, inventoryId);
+            var existingUser = await _unitOfWork.UserRepository.GetAsync(id);
             if (existingUser == null)
             {
                 return NotFound("User doesn't exist");
@@ -144,17 +154,35 @@ namespace ComputerInventory.API.Controllers
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(UserCreateDTO userCreateDTO)
+        public async Task<ActionResult<UserCreateDTO>> PostUser(UserCreateDTO userCreateDTO)
         {
             //_unitOfWork.UserRepository.Add(user);
             //await _unitOfWork.CompleteAsync();
 
             //return CreatedAtAction("GetUser", new { id = user.Id }, user);
 
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
+            //var userToCreate = _mapper.Map<User>(userCreateDTO);
+            //_unitOfWork.UserRepository.Add(userToCreate);
+
+            //try
+            //{
+            //    await _unitOfWork.CompleteAsync();
+            //}
+            //catch (Exception)
+            //{
+            //    return StatusCode(500, "Failed to create user");
+            //}
+
+            //return CreatedAtAction("GetUser", new { id = userToCreate.Id }, userToCreate);
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
             var userToCreate = _mapper.Map<User>(userCreateDTO);
             _unitOfWork.UserRepository.Add(userToCreate);
 
@@ -168,21 +196,17 @@ namespace ComputerInventory.API.Controllers
             }
 
             return CreatedAtAction("GetUser", new { id = userToCreate.Id }, userToCreate);
+
         }
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(int id, int inventoryId)
+        public async Task<IActionResult> DeleteUser(int id)
         {
-            var inventoryExists = await _unitOfWork.InventoryRepository.AnyAsync(inventoryId);
-
-            if (!inventoryExists)
-            {
-                return NotFound("Inventory doesn't exist");
-            }
+            
 
 
-            var user = await _unitOfWork.UserRepository.GetAsync(id, inventoryId);
+            var user = await _unitOfWork.UserRepository.GetAsync(id);
             if (user == null)
             {
                 return NotFound("User doesn't exist");
@@ -226,13 +250,13 @@ namespace ComputerInventory.API.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchUser(int id, JsonPatchDocument<UserUpdateDTO> patchDoc, int inventoryId)
+        public async Task<IActionResult> PatchUser(int id, JsonPatchDocument<UserUpdateDTO> patchDoc)
         {
             if (patchDoc == null)
             {
                 return BadRequest("Patch document cannot be null");
             }
-            var user = await _unitOfWork.UserRepository.GetAsync(id, inventoryId);
+            var user = await _unitOfWork.UserRepository.GetAsync(id);
             if (user == null)
             {
                 return NotFound("User doesn't exist");

@@ -22,7 +22,6 @@ namespace ComputerInventory.Data.Repositories
         public Task<bool> AnyAsync(int id)
         {
             return _context.Users.AnyAsync(u => u.Id == id);
-            
         }
 
         public async Task<IEnumerable<User>> GetAllAsync()
@@ -30,9 +29,14 @@ namespace ComputerInventory.Data.Repositories
             return await _context.Users.ToListAsync();
         }
 
-        public async Task<User?> GetAsync(int id, int inventoryId)
+        public async Task<User?> GetAsync(int id)
         {
             return await _context.Users.SingleOrDefaultAsync(u => u.Id == id);
+        }
+
+        public Task<User?> GetByNameAsync(string name)
+        {
+            return _context.Users.SingleOrDefaultAsync(u => u.Name == name);
         }
 
         public void Remove(User user)
