@@ -2,7 +2,10 @@
 using ComputerInventory.Core.Repositories;
 using ComputerInventory.Data.Data;
 using ComputerInventory.Data.Repositories;
+using ComputerInventory.Services.Services;
 using Microsoft.EntityFrameworkCore;
+using Service.Contracts.Interfaces;
+using System.Reflection.Metadata;
 
 namespace ComputerInventory.API
 {
@@ -18,10 +21,12 @@ namespace ComputerInventory.API
 
             builder.Services.AddControllers(opt => opt.ReturnHttpNotAcceptable = true)
                 .AddNewtonsoftJson()
-                .AddXmlDataContractSerializerFormatters();
+                .AddXmlDataContractSerializerFormatters()
+                .AddApplicationPart(typeof(AssemblyReference).Assembly);
 
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IServiceManager, ServiceManager>();
 
             builder.Services.AddAutoMapper(typeof(ComputerInventoryMappings));
 
