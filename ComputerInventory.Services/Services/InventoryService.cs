@@ -2,33 +2,21 @@
 using ComputerInventory.Core.DTOs;
 using ComputerInventory.Core.Entities;
 using ComputerInventory.Core.Repositories;
+using ComputerInventory.Core.Request;
 using Microsoft.AspNetCore.JsonPatch;
 using Service.Contracts.Interfaces;
 
 namespace ComputerInventory.Services.Services;
 
-public  class InventoryService : IInventoryService
+public class InventoryService : IInventoryService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
-
 
     public InventoryService(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
-    }
-
-    public async Task<IEnumerable<InventoryDTO>> GetInventoriesAsync(bool includeUsers)
-    {
-
-
-        var inventories = includeUsers
-            ? await _unitOfWork.InventoryRepository.GetAllAsync(true)
-            : await _unitOfWork.InventoryRepository.GetAllAsync();
-
-        var inventoryDtos = _mapper.Map<List<InventoryDTO>>(inventories);
-        return inventoryDtos;
     }
 
     public async Task<InventoryDTO> GetInventoryAsync(int id)
@@ -81,4 +69,20 @@ public  class InventoryService : IInventoryService
 
         return _mapper.Map<InventoryDTO>(inventory);
     }
+
+    public async Task<PagedList<InventoryDTO>> GetInventoriesAsync(InventoryRequestParams requestParams)
+    {
+        var inventories = await _unitOfWork.InventoryRepository.GetAllAsync(requestParams.IncludeUsers);
+
+        var inventoryDtos = _mapper.Map<List<InventoryDTO>>(inventories);
+
+        return await PagedList<InventoryDTO>.CreateAsync(inventoryDtos.AsQueryable(), requestParams.PageNumber, requestParams.PageSize);
+    }
+
+
+
+
+
+
+    //Hur skriver jag denna?
 }

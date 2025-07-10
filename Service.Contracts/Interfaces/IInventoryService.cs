@@ -1,11 +1,12 @@
 ﻿using ComputerInventory.Core.DTOs;
+using ComputerInventory.Core.Request;
 using Microsoft.AspNetCore.JsonPatch;
 
 namespace Service.Contracts.Interfaces
 {
     public interface IInventoryService
     {
-        Task<IEnumerable<InventoryDTO>> GetInventoriesAsync(bool includeUsers);
+        Task<PagedList<InventoryDTO>> GetInventoriesAsync(InventoryRequestParams requestParams);
 
         Task<InventoryDTO> GetInventoryAsync(int id);
 

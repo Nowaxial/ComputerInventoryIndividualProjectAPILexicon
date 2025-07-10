@@ -8,7 +8,9 @@ namespace ComputerInventory.Data.Data
     {
         public ComputerInventoryMappings()
         {
-            CreateMap<Inventory, InventoryDTO>();
+            CreateMap<Inventory, InventoryDTO>().ReverseMap();
+
+            CreateMap<PagedList<Inventory>, List<InventoryDTO>>();
 
             CreateMap<InventoryDTO, UserDTO>()
                 .ForMember(dto => dto.ComputerLeasingTimeEnd, opt => opt.MapFrom(src => src.StartDateForCheckingInventory.AddMonths(3)));
@@ -30,6 +32,8 @@ namespace ComputerInventory.Data.Data
                           opt => opt.MapFrom(src => GenerateComputerName(src.Position, src.Name)));
             CreateMap<User, UserGetDTO>();
         }
+
+        
 
         private static string GenerateComputerName(string position, string name)
         {

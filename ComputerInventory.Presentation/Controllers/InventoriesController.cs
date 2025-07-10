@@ -1,4 +1,5 @@
 ﻿using ComputerInventory.Core.DTOs;
+using ComputerInventory.Core.Request;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts.Interfaces;
@@ -11,13 +12,16 @@ public class InventoriesController : ControllerBase
 {
     private readonly IServiceManager _service;
 
-    public InventoriesController(IServiceManager service) => _service = service;
+    public InventoriesController(IServiceManager service)
+    {
+        _service = service;
+    }
 
     [HttpGet]
-    public async Task<IActionResult> GetInventories(bool includeUsers)
+    public async Task<ActionResult<PagedList<InventoryDTO>>> GetInventories([FromQuery] InventoryRequestParams requestParams)
     {
-        var inventories = await _service.InventoryService.GetInventoriesAsync(includeUsers);
-        return Ok(inventories);
+        var pagedInventories = await _service.InventoryService.GetInventoriesAsync(requestParams);
+        return Ok(pagedInventories);
     }
 
     [HttpGet("{id}", Name = "InventoryById")]

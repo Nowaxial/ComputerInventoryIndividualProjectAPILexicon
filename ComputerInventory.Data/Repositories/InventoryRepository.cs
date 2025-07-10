@@ -1,17 +1,17 @@
-﻿using ComputerInventory.Core.Entities;
+﻿using Bogus.DataSets;
+using ComputerInventory.Core.Entities;
 using ComputerInventory.Core.Repositories;
+using ComputerInventory.Core.Request;
 using ComputerInventory.Data.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace ComputerInventory.Data.Repositories
 {
-    public class InventoryRepository : IInventoryRepository
+    public class InventoryRepository : RepositoryBase<Inventory>, IInventoryRepository
     {
-        private readonly ComputerInventoryContext _context;
-
-        public InventoryRepository(ComputerInventoryContext context)
+        public InventoryRepository(ComputerInventoryContext context) : base(context)
         {
-            _context = context;
         }
         public void Add(Inventory inventory)
         {
@@ -25,15 +25,41 @@ namespace ComputerInventory.Data.Repositories
 
         public async Task<IEnumerable<Inventory>> GetAllAsync(bool includeUsers = false)
         {
-            return includeUsers
-                ? await _context.Inventories.Include(u => u.Users).ToListAsync()
-                : await _context.Inventories.ToListAsync();
+            var query = _context.Inventories.AsQueryable();
+            if (includeUsers)
+            {
+                query = query.Include(i => i.Users);
+            }
+            return await query.ToListAsync();
         }
 
         public async Task<Inventory?> GetAsync(int id)
         {
-            return await _context.Inventories.SingleOrDefaultAsync(i => i.Id == id);
+            return await _context.Inventories.FindAsync(id);
         }
+
+        //public Task<PagedList<Inventory>> GetAllAsync(InventoryRequestParams requestParams)
+        //{
+        //    var inventories = requestParams.IncludeUsers ? FindAll().Include(i => i.Users)
+        //                                                 : FindAll();
+        //    return PagedList<Inventory>.CreateAsync(inventories, requestParams.PageNumber, requestParams.PageSize);
+        //}
+
+        public async Task<PagedList<Inventory>> GetAllAsync(InventoryRequestParams requestParams)
+        {
+            //var inventories = requestParams.IncludeUsers ? FindAll().Include(i => i.Users)
+            //                                             : FindAll();
+            //return  await PagedList<Inventory>.CreateAsync(inventories, requestParams.PageNumber, requestParams.PageSize);
+
+            IQueryable<Inventory> query = FindAll();
+
+            query = requestParams.IncludeUsers ? query.Include(i => i.Users) : query;
+
+            return await PagedList<Inventory>.CreateAsync(query, requestParams.PageNumber, requestParams.PageSize);
+
+        }
+
+
 
         public void Remove(Inventory inventory)
         {

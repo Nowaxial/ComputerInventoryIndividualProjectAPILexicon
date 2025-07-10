@@ -1,4 +1,5 @@
 ﻿using ComputerInventory.Core.Entities;
+using ComputerInventory.Core.Request;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace ComputerInventory.Core.Repositories
 {
     public interface IInventoryRepository
     {
-        Task<IEnumerable<Inventory>> GetAllAsync(bool includeUsers = false);
+        Task<PagedList<Inventory>> GetAllAsync(InventoryRequestParams requestParams);
         Task<Inventory?> GetAsync(int id);
         Task<bool> AnyAsync(int id);
         void Add(Inventory inventory); 

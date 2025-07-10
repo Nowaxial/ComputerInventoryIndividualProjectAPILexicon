@@ -9,6 +9,6 @@ namespace ComputerInventory.Core.DTOs
         public DateTime StartDateForCheckingInventory { get; init; }
         public DateTime EndDateForCheckingInventory => StartDateForCheckingInventory.AddMonths(3);
         public string? City { get; init; }
-        public ICollection<User>? Users { get; init; }
+        public List<UserDTO>? Users { get; init; }
     }
 }

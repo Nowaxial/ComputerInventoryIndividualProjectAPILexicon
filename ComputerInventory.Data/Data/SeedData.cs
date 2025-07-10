@@ -15,7 +15,7 @@ namespace ComputerInventory.Data.Data
 
             try
             {
-                var inventories = GenerateInventories(5);
+                var inventories = GenerateInventories(30);
                 db.AddRange(inventories);
                 await db.SaveChangesAsync();
             }
@@ -30,7 +30,7 @@ namespace ComputerInventory.Data.Data
             var faker = new Faker<Inventory>("sv").Rules((f, c) =>
             {
                 // Slumpa antal användare
-                int userCount = 5;
+                int userCount = 50;
                 var users = GenerateUsers(userCount);
 
                 // Slumpa en användare för att bestämma datornamn
