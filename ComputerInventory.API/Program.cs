@@ -24,9 +24,10 @@ namespace ComputerInventory.API
                 .AddXmlDataContractSerializerFormatters()
                 .AddApplicationPart(typeof(AssemblyReference).Assembly);
 
+            builder.Services.ConfigureServiceLayerServices();
+            builder.Services.ConfigureRepositories();
 
-            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-            builder.Services.AddScoped<IServiceManager, ServiceManager>();
+            builder.Services.ConfigureCors();
 
             builder.Services.AddAutoMapper(typeof(ComputerInventoryMappings));
 
