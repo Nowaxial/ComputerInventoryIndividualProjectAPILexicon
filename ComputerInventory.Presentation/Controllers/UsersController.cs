@@ -1,4 +1,5 @@
 ﻿using ComputerInventory.Core.DTOs;
+using ComputerInventory.Core.Entities;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts.Interfaces;
@@ -35,10 +36,17 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateUser([FromBody] UserCreateDTO user)
+    public async Task<ActionResult> CreateUser(UserCreateDTO user)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         var createdUser = await _service.UserService.CreateUserAsync(user);
+
         return CreatedAtRoute("UserById", new { id = createdUser.Id }, createdUser);
+        
     }
 
     [HttpPut("{id}")]

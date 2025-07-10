@@ -12,7 +12,6 @@ public class UserService : IUserService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
-    
 
     public UserService(IUnitOfWork unitOfWork, IMapper mapper)
     {
@@ -30,12 +29,12 @@ public class UserService : IUserService
         return userDtos;
     }
 
-    public async Task<UserGetDTO> GetUserAsync(int id)
+    public async Task<UserDTO> GetUserAsync(int id)
     {
         var user = await _unitOfWork.UserRepository.GetAsync(id);
         if (user == null) throw new KeyNotFoundException($"User with id {id} not found");
 
-        return _mapper.Map<UserGetDTO>(user);
+        return _mapper.Map<UserDTO>(user);
     }
 
     public async Task<UserGetDTO> GetUserByNameAsync(string name)
@@ -46,13 +45,28 @@ public class UserService : IUserService
         return _mapper.Map<UserGetDTO>(user);
     }
 
-    public async Task<UserGetDTO> CreateUserAsync(UserCreateDTO userDto)
+    public async Task<UserDTO> CreateUserAsync(UserCreateDTO userDto)
     {
         var user = _mapper.Map<User>(userDto);
+
+        if (!await _unitOfWork.InventoryRepository.AnyAsync(user.InventoryId))
+        {
+            throw new KeyNotFoundException($"Inventory with id {user.InventoryId} not found");
+        }
+
+        var users = await _unitOfWork.UserRepository.GetAllAsync();
+        if (users.Count(u => u.InventoryId == user.InventoryId) >= 10)
+        {
+            throw new InvalidOperationException("Maximum number of users (10) per inventory has been reached.");
+        }
+        if (users.Any(u => u.Name == user.Name))
+        {
+            throw new InvalidOperationException("A user with the same name already exists.");
+        }
+
         _unitOfWork.UserRepository.Add(user);
         await _unitOfWork.CompleteAsync();
-
-        return _mapper.Map<UserGetDTO>(user);
+        return _mapper.Map<UserDTO>(user);
     }
 
     public async Task UpdateUserAsync(int id, UserUpdateDTO userDto)

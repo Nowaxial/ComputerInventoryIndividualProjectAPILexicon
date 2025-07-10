@@ -21,6 +21,7 @@ namespace ComputerInventory.Data.Data
 
             CreateMap<User, UserDTO>();
             CreateMap<User, UserUpdateDTO>().ReverseMap();
+            CreateMap<User, UserCreateDTO>().ReverseMap();
 
             // För Create
             CreateMap<UserCreateDTO, User>()

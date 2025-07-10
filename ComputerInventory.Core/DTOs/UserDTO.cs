@@ -13,5 +13,6 @@ namespace ComputerInventory.Core.DTOs
         public string ComputerName { get; init; }
         public string Position { get; init; }
         public string InventoryId { get; init; } 
+        public int Id { get; init; }
     }
 }

@@ -20,6 +20,8 @@ namespace ComputerInventory.Core.DTOs
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string Email { get; init; }
 
-        public string? ComputerName { get; init; }
+        [Required(ErrorMessage = "InventoryId is a required field.")]
+        public int InventoryId { get; init; }
+        //public int Id { get; init; }
     }
 }

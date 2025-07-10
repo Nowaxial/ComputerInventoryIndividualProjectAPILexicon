@@ -30,7 +30,7 @@ namespace ComputerInventory.Data.Data
             var faker = new Faker<Inventory>("sv").Rules((f, c) =>
             {
                 // Slumpa antal användare
-                int userCount = 50;
+                int userCount = 8;
                 var users = GenerateUsers(userCount);
 
                 // Slumpa en användare för att bestämma datornamn
