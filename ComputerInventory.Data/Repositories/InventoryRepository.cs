@@ -1,74 +1,55 @@
-﻿using Bogus.DataSets;
+﻿using ComputerInventory.Core.Common;
 using ComputerInventory.Core.Entities;
 using ComputerInventory.Core.Repositories;
 using ComputerInventory.Core.Request;
 using ComputerInventory.Data.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
-namespace ComputerInventory.Data.Repositories
+namespace ComputerInventory.Data.Repositories;
+
+public class InventoryRepository : IInventoryRepository
 {
-    public class InventoryRepository : RepositoryBase<Inventory>, IInventoryRepository
+    private readonly ComputerInventoryContext _context;
+
+    public InventoryRepository(ComputerInventoryContext context)
     {
-        public InventoryRepository(ComputerInventoryContext context) : base(context)
-        {
-        }
-        public void Add(Inventory inventory)
-        {
-            _context.Inventories.Add(inventory);
-        }
+        _context = context;
+    }
 
-        public async Task<bool> AnyAsync(int id)
-        {
-            return await _context.Inventories.AnyAsync(i => i.Id == id);
-        }
+    public async Task<PagedList<Inventory>> GetAllAsync(InventoryRequestParams requestParams)
+    {
+        IQueryable<Inventory> query = _context.Inventories;
 
-        public async Task<IEnumerable<Inventory>> GetAllAsync(bool includeUsers = false)
+        if (requestParams.IncludeUsers)
         {
-            var query = _context.Inventories.AsQueryable();
-            if (includeUsers)
-            {
-                query = query.Include(i => i.Users);
-            }
-            return await query.ToListAsync();
+            query = query.Include(i => i.Users);
         }
 
-        public async Task<Inventory?> GetAsync(int id)
-        {
-            return await _context.Inventories.FindAsync(id);
-        }
+        return await PagedList<Inventory>.CreateAsync(query, requestParams.PageNumber, requestParams.PageSize);
+    }
 
-        //public Task<PagedList<Inventory>> GetAllAsync(InventoryRequestParams requestParams)
-        //{
-        //    var inventories = requestParams.IncludeUsers ? FindAll().Include(i => i.Users)
-        //                                                 : FindAll();
-        //    return PagedList<Inventory>.CreateAsync(inventories, requestParams.PageNumber, requestParams.PageSize);
-        //}
+    public async Task<Inventory?> GetAsync(int id)
+    {
+        return await _context.Inventories.FindAsync(id);
+    }
 
-        public async Task<PagedList<Inventory>> GetAllAsync(InventoryRequestParams requestParams)
-        {
-            //var inventories = requestParams.IncludeUsers ? FindAll().Include(i => i.Users)
-            //                                             : FindAll();
-            //return  await PagedList<Inventory>.CreateAsync(inventories, requestParams.PageNumber, requestParams.PageSize);
+    public async Task<bool> AnyAsync(int id)
+    {
+        return await _context.Inventories.AnyAsync(i => i.Id == id);
+    }
 
-            IQueryable<Inventory> query = FindAll();
+    public void Add(Inventory inventory)
+    {
+        _context.Inventories.Add(inventory);
+    }
 
-            query = requestParams.IncludeUsers ? query.Include(i => i.Users) : query;
+    public void Update(Inventory inventory)
+    {
+        _context.Inventories.Update(inventory);
+    }
 
-            return await PagedList<Inventory>.CreateAsync(query, requestParams.PageNumber, requestParams.PageSize);
-
-        }
-
-
-
-        public void Remove(Inventory inventory)
-        {
-            _context.Inventories.Remove(inventory);
-        }
-
-        public void Update(Inventory inventory)
-        {
-            _context.Inventories.Update(inventory);
-        }
+    public void Remove(Inventory inventory)
+    {
+        _context.Inventories.Remove(inventory);
     }
 }

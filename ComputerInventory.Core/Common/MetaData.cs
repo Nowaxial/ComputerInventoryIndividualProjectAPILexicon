@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ComputerInventory.Core.Request
+namespace ComputerInventory.Core.Common
 {
     public class MetaData
     {

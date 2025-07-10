@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ComputerInventory.Core.Common;
 using ComputerInventory.Core.DTOs;
 using ComputerInventory.Core.Entities;
 

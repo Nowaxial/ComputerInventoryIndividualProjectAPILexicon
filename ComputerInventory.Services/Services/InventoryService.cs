@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ComputerInventory.Core.Common;
 using ComputerInventory.Core.DTOs;
 using ComputerInventory.Core.Entities;
 using ComputerInventory.Core.Repositories;
@@ -19,11 +20,23 @@ public class InventoryService : IInventoryService
         _mapper = mapper;
     }
 
+    public async Task<PagedList<InventoryDTO>> GetInventoriesAsync(InventoryRequestParams requestParams)
+    {
+        var pagedList = await _unitOfWork.InventoryRepository.GetAllAsync(requestParams);
+
+        var inventoryDtos = pagedList.Items.Select(i => _mapper.Map<InventoryDTO>(i)).ToList();
+
+        return new PagedList<InventoryDTO>(
+            inventoryDtos,
+            pagedList.MetaData.TotalCount,
+            pagedList.MetaData.CurrentPage,
+            pagedList.MetaData.PageSize
+        );
+    }
+
     public async Task<InventoryDTO> GetInventoryAsync(int id)
     {
         var inventory = await _unitOfWork.InventoryRepository.GetAsync(id);
-        if (inventory == null) throw new KeyNotFoundException($"Inventory with id {id} not found");
-
         return _mapper.Map<InventoryDTO>(inventory);
     }
 
@@ -32,15 +45,12 @@ public class InventoryService : IInventoryService
         var inventory = _mapper.Map<Inventory>(inventoryDto);
         _unitOfWork.InventoryRepository.Add(inventory);
         await _unitOfWork.CompleteAsync();
-
         return _mapper.Map<InventoryDTO>(inventory);
     }
 
     public async Task UpdateInventoryAsync(int id, InventoryUpdateDTO inventoryDto)
     {
         var inventory = await _unitOfWork.InventoryRepository.GetAsync(id);
-        if (inventory == null) throw new KeyNotFoundException($"Inventory with id {id} not found");
-
         _mapper.Map(inventoryDto, inventory);
         _unitOfWork.InventoryRepository.Update(inventory);
         await _unitOfWork.CompleteAsync();
@@ -49,8 +59,6 @@ public class InventoryService : IInventoryService
     public async Task DeleteInventoryAsync(int id)
     {
         var inventory = await _unitOfWork.InventoryRepository.GetAsync(id);
-        if (inventory == null) throw new KeyNotFoundException($"Inventory with id {id} not found");
-
         _unitOfWork.InventoryRepository.Remove(inventory);
         await _unitOfWork.CompleteAsync();
     }
@@ -58,9 +66,8 @@ public class InventoryService : IInventoryService
     public async Task<InventoryDTO> PatchInventoryAsync(int inventoryId, JsonPatchDocument<InventoryUpdateDTO> patchDoc)
     {
         var inventory = await _unitOfWork.InventoryRepository.GetAsync(inventoryId);
-        if (inventory == null) throw new KeyNotFoundException($"Inventory with id {inventoryId} not found");
-
         var inventoryToPatch = _mapper.Map<InventoryUpdateDTO>(inventory);
+
         patchDoc.ApplyTo(inventoryToPatch);
 
         _mapper.Map(inventoryToPatch, inventory);
@@ -69,20 +76,4 @@ public class InventoryService : IInventoryService
 
         return _mapper.Map<InventoryDTO>(inventory);
     }
-
-    public async Task<PagedList<InventoryDTO>> GetInventoriesAsync(InventoryRequestParams requestParams)
-    {
-        var inventories = await _unitOfWork.InventoryRepository.GetAllAsync(requestParams.IncludeUsers);
-
-        var inventoryDtos = _mapper.Map<List<InventoryDTO>>(inventories);
-
-        return await PagedList<InventoryDTO>.CreateAsync(inventoryDtos.AsQueryable(), requestParams.PageNumber, requestParams.PageSize);
-    }
-
-
-
-
-
-
-    //Hur skriver jag denna?
 }

@@ -18,10 +18,10 @@ public class InventoriesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<PagedList<InventoryDTO>>> GetInventories([FromQuery] InventoryRequestParams requestParams)
+    public async Task<IActionResult> GetInventories([FromQuery] InventoryRequestParams requestParams)
     {
-        var pagedInventories = await _service.InventoryService.GetInventoriesAsync(requestParams);
-        return Ok(pagedInventories);
+        var inventories = await _service.InventoryService.GetInventoriesAsync(requestParams);
+        return Ok(inventories);
     }
 
     [HttpGet("{id}", Name = "InventoryById")]
