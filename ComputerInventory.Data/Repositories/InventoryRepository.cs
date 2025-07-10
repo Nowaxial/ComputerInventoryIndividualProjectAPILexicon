@@ -25,6 +25,8 @@ public class InventoryRepository : IInventoryRepository
             query = query.Include(i => i.Users);
         }
 
+        query = query.OrderBy(i => i.Id);
+
         return await PagedList<Inventory>.CreateAsync(query, requestParams.PageNumber, requestParams.PageSize);
     }
 
