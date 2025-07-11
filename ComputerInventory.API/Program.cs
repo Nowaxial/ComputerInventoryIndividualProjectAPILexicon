@@ -2,6 +2,7 @@
 using ComputerInventory.Core.Repositories;
 using ComputerInventory.Data.Data;
 using ComputerInventory.Data.Repositories;
+using ComputerInventory.Presentation.Extensions;
 using ComputerInventory.Services.Services;
 using Microsoft.EntityFrameworkCore;
 using Service.Contracts.Interfaces;
@@ -37,6 +38,7 @@ namespace ComputerInventory.API
 
             var app = builder.Build();
             await app.SeedDataAsync();
+            app.ConfigureExceptionHandler();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

@@ -50,7 +50,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateUser(int id, [FromBody] UserUpdateDTO user)
+    public async Task<IActionResult> UpdateUser(int id, UserUpdateDTO user)
     {
         await _service.UserService.UpdateUserAsync(id, user);
         return NoContent();

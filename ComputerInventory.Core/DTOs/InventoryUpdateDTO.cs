@@ -12,6 +12,6 @@ namespace ComputerInventory.Core.DTOs
         public string Address { get; set; }
         public string City { get; set; }
 
-        public int Id { get; set; }
+        
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts.Interfaces;
+using System.Numerics;
 using System.Text.Json;
 
 namespace ComputerInventory.Presentation.Controllers;
@@ -39,6 +40,10 @@ public class InventoriesController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateInventory(InventoryCreateDTO inventory)
     {
+        if (!ModelState.IsValid)
+        {
+            BadRequest(ModelState);
+        }
         var createdInventory = await _service.InventoryService.CreateInventoryAsync(inventory);
         return CreatedAtRoute("InventoryById", new { id = createdInventory.Id }, createdInventory);
     }
@@ -46,6 +51,10 @@ public class InventoriesController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateInventory(int id,InventoryUpdateDTO inventory)
     {
+        if (!ModelState.IsValid)
+        {
+            BadRequest(ModelState);
+        }
         await _service.InventoryService.UpdateInventoryAsync(id, inventory);
         return NoContent();
     }

@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
 using ComputerInventory.Core.DTOs;
 using ComputerInventory.Core.Entities;
+using ComputerInventory.Core.Exceptions;
 using ComputerInventory.Core.Repositories;
+using ComputerInventory.Data.Exceptions;
 using Microsoft.AspNetCore.JsonPatch;
 using Service.Contracts.Interfaces;
-using System.Text.Json;
 
 namespace ComputerInventory.Services.Services;
 
@@ -32,7 +33,7 @@ public class UserService : IUserService
     public async Task<UserDTO> GetUserAsync(int id)
     {
         var user = await _unitOfWork.UserRepository.GetAsync(id);
-        if (user == null) throw new KeyNotFoundException($"User with id {id} not found");
+        if (user == null) throw new UserNotFoundException($"User with id {id} not found");
 
         return _mapper.Map<UserDTO>(user);
     }
@@ -40,28 +41,30 @@ public class UserService : IUserService
     public async Task<UserGetDTO> GetUserByNameAsync(string name)
     {
         var user = await _unitOfWork.UserRepository.GetByNameAsync(name);
-        if (user == null) throw new KeyNotFoundException($"User with name {name} not found");
+        if (user == null) throw new UserNotFoundByNameException($"User with name {name} not found");
 
         return _mapper.Map<UserGetDTO>(user);
     }
 
     public async Task<UserDTO> CreateUserAsync(UserCreateDTO userDto)
     {
+
+
         var user = _mapper.Map<User>(userDto);
 
         if (!await _unitOfWork.InventoryRepository.AnyAsync(user.InventoryId))
         {
-            throw new KeyNotFoundException($"Inventory with id {user.InventoryId} not found");
+            throw new InventoryNotFoundException($"Inventory with inventoryID {user.InventoryId} not found");
         }
 
         var users = await _unitOfWork.UserRepository.GetAllAsync();
         if (users.Count(u => u.InventoryId == user.InventoryId) >= 10)
         {
-            throw new InvalidOperationException("Maximum number of users (10) per inventory has been reached.");
+            throw new MaxUsersReachedInInventoryException("Maximum number of users (10) per inventory has been reached.");
         }
         if (users.Any(u => u.Name == user.Name))
         {
-            throw new InvalidOperationException("A user with the same name already exists.");
+            throw new UserFoundWithTheSameNameException("A user with the same name already exists.");
         }
 
         _unitOfWork.UserRepository.Add(user);
@@ -74,7 +77,7 @@ public class UserService : IUserService
         if (id != userDto.Id) throw new ArgumentException("ID mismatch");
 
         var user = await _unitOfWork.UserRepository.GetAsync(id);
-        if (user == null) throw new KeyNotFoundException($"User with id {id} not found");
+        if (user == null) throw new UserNotFoundException($"User with id {id} not found");
 
         _mapper.Map(userDto, user);
         _unitOfWork.UserRepository.Update(user);
@@ -84,7 +87,7 @@ public class UserService : IUserService
     public async Task DeleteUserAsync(int id)
     {
         var user = await _unitOfWork.UserRepository.GetAsync(id);
-        if (user == null) throw new KeyNotFoundException($"User with id {id} not found");
+        if (user == null) throw new UserNotFoundException($"User with id {id} not found");
 
         _unitOfWork.UserRepository.Remove(user);
         await _unitOfWork.CompleteAsync();
@@ -93,7 +96,7 @@ public class UserService : IUserService
     public async Task<UserGetDTO> PatchUserAsync(int id, JsonPatchDocument<UserUpdateDTO> patchDoc)
     {
         var user = await _unitOfWork.UserRepository.GetAsync(id);
-        if (user == null) throw new KeyNotFoundException($"User with id {id} not found");
+        if (user == null) throw new UserNotFoundException($"User with id {id} not found");
 
         var userToPatch = _mapper.Map<UserUpdateDTO>(user);
         patchDoc.ApplyTo(userToPatch);

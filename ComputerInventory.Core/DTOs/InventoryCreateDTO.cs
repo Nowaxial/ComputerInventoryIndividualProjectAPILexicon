@@ -13,15 +13,15 @@ namespace ComputerInventory.Core.DTOs
 
         [Required(ErrorMessage = "Inventory name is a required field.")]
         [MaxLength(60, ErrorMessage = "Maximum length for the Name is 60 characters.")]
-        public string? Name { get; init; }
+        public string Name { get; init; }
 
         [Required(ErrorMessage = "Address is a required field.")]
         [MaxLength(60, ErrorMessage = "Maximum length for the Address is 60 characters")]
-        public string? Address { get; init; }
+        public string Address { get; init; }
 
-        //[Required(ErrorMessage = "City is a required field.")]
-        //[MaxLength(25, ErrorMessage = "Maximum length for the City is 25 characters")]
-        public string? City { get; init; }
+        [Required(ErrorMessage = "City is a required field.")]
+        [MaxLength(15, ErrorMessage = "Maximum length for City is 15 characters")]
+        public string City { get; init; }
 
     }
 }
