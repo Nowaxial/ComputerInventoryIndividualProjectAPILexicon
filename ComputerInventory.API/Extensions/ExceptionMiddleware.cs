@@ -1,9 +1,8 @@
 ﻿using ComputerInventory.Core.Exceptions;
-using ComputerInventory.Data.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ComputerInventory.Presentation.Extensions
+namespace ComputerInventory.API.Extensions
 {
     public static class ExceptionMiddleware
     {

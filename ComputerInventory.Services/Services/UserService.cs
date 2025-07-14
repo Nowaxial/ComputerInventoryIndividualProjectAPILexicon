@@ -3,7 +3,6 @@ using ComputerInventory.Core.DTOs;
 using ComputerInventory.Core.Entities;
 using ComputerInventory.Core.Exceptions;
 using ComputerInventory.Core.Repositories;
-using ComputerInventory.Data.Exceptions;
 using Microsoft.AspNetCore.JsonPatch;
 using Service.Contracts.Interfaces;
 

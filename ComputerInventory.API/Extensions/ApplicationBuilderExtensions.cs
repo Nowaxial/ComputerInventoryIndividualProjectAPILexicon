@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ComputerInventory.Data.Data;
+﻿using ComputerInventory.Data.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace ComputerInventory.API.Extensions
 {

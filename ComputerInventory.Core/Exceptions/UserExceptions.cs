@@ -1,4 +1,4 @@
-﻿namespace ComputerInventory.Data.Exceptions
+﻿namespace ComputerInventory.Core.Exceptions
 {
     public class UserAlreadyExistsException : Exception
     {

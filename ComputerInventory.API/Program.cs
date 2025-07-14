@@ -1,11 +1,6 @@
 ﻿using ComputerInventory.API.Extensions;
-using ComputerInventory.Core.Repositories;
 using ComputerInventory.Data.Data;
-using ComputerInventory.Data.Repositories;
-using ComputerInventory.Presentation.Extensions;
-using ComputerInventory.Services.Services;
 using Microsoft.EntityFrameworkCore;
-using Service.Contracts.Interfaces;
 using System.Reflection.Metadata;
 
 namespace ComputerInventory.API
