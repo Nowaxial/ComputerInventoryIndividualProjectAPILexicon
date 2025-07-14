@@ -1,8 +1,10 @@
 ﻿using ComputerInventory.Core.DTOs;
 using ComputerInventory.Core.Entities;
+using ComputerInventory.Core.Request;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts.Interfaces;
+using System.Text.Json;
 
 namespace ComputerInventory.Presentation.Controllers;
 
@@ -15,9 +17,12 @@ public class UsersController : ControllerBase
     public UsersController(IServiceManager service) => _service = service;
 
     [HttpGet]
-    public async Task<IActionResult> GetUsers()
+    public async Task<IActionResult> GetUsers([FromQuery] RequestParams requestParams)
     {
-        var users = await _service.UserService.GetUsersAsync();
+        var users = await _service.UserService.GetUsersAsync(requestParams);
+
+        Response.Headers["X-Pagination"] = JsonSerializer.Serialize(users.MetaData);
+
         return Ok(users);
     }
 

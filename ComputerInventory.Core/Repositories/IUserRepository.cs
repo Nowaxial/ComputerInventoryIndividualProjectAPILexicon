@@ -1,4 +1,6 @@
-﻿using ComputerInventory.Core.Entities;
+﻿using ComputerInventory.Core.Common;
+using ComputerInventory.Core.Entities;
+using ComputerInventory.Core.Request;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +11,7 @@ namespace ComputerInventory.Core.Repositories
 {
     public interface IUserRepository
     {
+        Task<PagedList<User>> GetAllAsync(RequestParams requestParams);
         Task<IEnumerable<User>> GetAllAsync();
         Task<User?> GetAsync(int id);
         Task<bool> AnyAsync(int id);

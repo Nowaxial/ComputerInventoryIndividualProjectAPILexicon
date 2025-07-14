@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using ComputerInventory.Core.Common;
 using ComputerInventory.Core.DTOs;
 using ComputerInventory.Core.Entities;
 using ComputerInventory.Core.Exceptions;
 using ComputerInventory.Core.Repositories;
+using ComputerInventory.Core.Request;
 using Microsoft.AspNetCore.JsonPatch;
 using Service.Contracts.Interfaces;
 
@@ -19,15 +21,29 @@ public class UserService : IUserService
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<UserDTO>> GetUsersAsync()
-    {
-        var users = await _unitOfWork.UserRepository.GetAllAsync();
-        if (users == null || !users.Any())
-            throw new KeyNotFoundException("No users found");
+    //public async Task<IEnumerable<UserDTO>> GetUsersAsync()
+    //{
+    //    var users = await _unitOfWork.UserRepository.GetAllAsync();
+    //    if (users == null || !users.Any())
+    //        throw new KeyNotFoundException("No users found");
 
-        var userDtos = _mapper.Map<IEnumerable<UserDTO>>(users);
-        return userDtos;
+    //    var userDtos = _mapper.Map<IEnumerable<UserDTO>>(users);
+    //    return userDtos;
+    //}
+
+    public async Task<PagedList<UserDTO>> GetUsersAsync(RequestParams requestParams)
+    {
+        var pagedList = await _unitOfWork.UserRepository.GetAllAsync(requestParams);
+        var userDtos = pagedList.Items.Select(u => _mapper.Map<UserDTO>(u)).ToList();
+
+        return new PagedList<UserDTO>(
+            userDtos,
+            pagedList.MetaData.TotalCount,
+            pagedList.MetaData.CurrentPage,
+            pagedList.MetaData.PageSize
+        );
     }
+
 
     public async Task<UserDTO> GetUserAsync(int id)
     {

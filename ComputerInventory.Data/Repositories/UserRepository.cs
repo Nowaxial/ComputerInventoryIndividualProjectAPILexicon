@@ -1,5 +1,7 @@
-﻿using ComputerInventory.Core.Entities;
+﻿using ComputerInventory.Core.Common;
+using ComputerInventory.Core.Entities;
 using ComputerInventory.Core.Repositories;
+using ComputerInventory.Core.Request;
 using ComputerInventory.Data.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,6 +29,12 @@ namespace ComputerInventory.Data.Repositories
         public async Task<IEnumerable<User>> GetAllAsync()
         {
             return await _context.Users.ToListAsync();
+        }
+
+        public async Task<PagedList<User>> GetAllAsync(RequestParams requestParams)
+        {
+            var query = _context.Users.OrderBy(u => u.Id);
+            return await PagedList<User>.CreateAsync(query, requestParams.PageNumber, requestParams.PageSize);
         }
 
         public async Task<User?> GetAsync(int id)
