@@ -14,7 +14,10 @@ public class UsersController : ControllerBase
 {
     private readonly IServiceManager _service;
 
-    public UsersController(IServiceManager service) => _service = service;
+    public UsersController(IServiceManager service)
+    {
+        _service = service;
+    }
 
     [HttpGet]
     public async Task<IActionResult> GetUsers([FromQuery] RequestParams requestParams)
@@ -26,7 +29,7 @@ public class UsersController : ControllerBase
         return Ok(users);
     }
 
-    [HttpGet("{id}", Name = "UserById")]
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetUser(int id)
     {
         var user = await _service.UserService.GetUserAsync(id);
@@ -50,7 +53,7 @@ public class UsersController : ControllerBase
 
         var createdUser = await _service.UserService.CreateUserAsync(user);
 
-        return CreatedAtRoute("UserById", new { id = createdUser.Id }, createdUser);
+        return CreatedAtRoute(nameof(GetUser), new { id = createdUser.Id }, createdUser);
         
     }
 
@@ -72,6 +75,7 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> PatchUser(int id, [FromBody] JsonPatchDocument<UserUpdateDTO> patchDoc)
     {
         var user = await _service.UserService.PatchUserAsync(id, patchDoc);
+
         return Ok(user);
     }
 }

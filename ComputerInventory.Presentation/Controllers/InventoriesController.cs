@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts.Interfaces;
-using System.Numerics;
 using System.Text.Json;
 
 namespace ComputerInventory.Presentation.Controllers;
@@ -30,7 +29,7 @@ public class InventoriesController : ControllerBase
         return Ok(inventories);
     }
 
-    [HttpGet("{id}", Name = "InventoryById")]
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetInventory(int id)
     {
         var inventory = await _service.InventoryService.GetInventoryAsync(id);
@@ -45,11 +44,11 @@ public class InventoriesController : ControllerBase
             BadRequest(ModelState);
         }
         var createdInventory = await _service.InventoryService.CreateInventoryAsync(inventory);
-        return CreatedAtRoute("InventoryById", new { id = createdInventory.Id }, createdInventory);
+        return CreatedAtAction(nameof(GetInventory), new { id = createdInventory.Id }, createdInventory);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateInventory(int id,InventoryUpdateDTO inventory)
+    public async Task<IActionResult> UpdateInventory(int id, InventoryUpdateDTO inventory)
     {
         if (!ModelState.IsValid)
         {

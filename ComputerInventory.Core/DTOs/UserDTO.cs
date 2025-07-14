@@ -12,7 +12,7 @@ namespace ComputerInventory.Core.DTOs
         public DateTime ComputerLeasingTimeEnd { get; init; }
         public string ComputerName { get; init; }
         public string Position { get; init; }
-        public string InventoryId { get; init; } 
+        public int InventoryId { get; init; } 
         public int Id { get; init; }
     }
 }

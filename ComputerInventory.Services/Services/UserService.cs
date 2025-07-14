@@ -91,8 +91,14 @@ public class UserService : IUserService
     {
         if (id != userDto.Id) throw new ArgumentException("ID mismatch");
 
+
         var user = await _unitOfWork.UserRepository.GetAsync(id);
         if (user == null) throw new UserNotFoundException($"User with id {id} not found");
+
+        if (!await _unitOfWork.InventoryRepository.AnyAsync(user.InventoryId))
+        {
+            throw new InventoryNotFoundException($"Inventory with inventoryID {user.InventoryId} not found");
+        }
 
         _mapper.Map(userDto, user);
         _unitOfWork.UserRepository.Update(user);
@@ -112,6 +118,10 @@ public class UserService : IUserService
     {
         var user = await _unitOfWork.UserRepository.GetAsync(id);
         if (user == null) throw new UserNotFoundException($"User with id {id} not found");
+        if (!await _unitOfWork.InventoryRepository.AnyAsync(user.InventoryId))
+        {
+            throw new InventoryNotFoundException($"Inventory with inventoryID {user.InventoryId} not found");
+        }
 
         var userToPatch = _mapper.Map<UserUpdateDTO>(user);
         patchDoc.ApplyTo(userToPatch);
