@@ -1,5 +1,4 @@
 ﻿using ComputerInventory.Core.DTOs;
-using ComputerInventory.Core.Entities;
 using ComputerInventory.Core.Request;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -50,25 +49,29 @@ public class UsersController : ControllerBase
     [HttpPost]
     public async Task<ActionResult> CreateUser(UserCreateDTO user)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
+
 
         var createdUser = await _service.UserService.CreateUserAsync(user);
+        TryValidateModel(createdUser);
+        if (!ModelState.IsValid)
+        {
+            return UnprocessableEntity(ModelState);
+        }
 
         return CreatedAtRoute(nameof(GetUser), new { id = createdUser.Id }, createdUser);
-        
+
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateUser(int id, UserUpdateDTO user)
     {
+
+        await _service.UserService.UpdateUserAsync(id, user);
+        TryValidateModel(user);
         if (!ModelState.IsValid)
         {
-            return BadRequest(ModelState);
+            return UnprocessableEntity(ModelState);
         }
-        await _service.UserService.UpdateUserAsync(id, user);
         return NoContent();
     }
 
@@ -83,6 +86,11 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> PatchUser(int id, [FromBody] JsonPatchDocument<UserUpdateDTO> patchDoc)
     {
         var user = await _service.UserService.PatchUserAsync(id, patchDoc);
+        TryValidateModel(user);
+        if (!ModelState.IsValid)
+        {
+            return UnprocessableEntity(ModelState);
+        }
 
         return Ok(user);
     }

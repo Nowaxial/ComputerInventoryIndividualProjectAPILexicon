@@ -87,15 +87,28 @@ public class UserService : IUserService
 
     public async Task UpdateUserAsync(int id, UserUpdateDTO userDto)
     {
-        if (id != userDto.Id) throw new ArgumentException("ID mismatch");
+ 
 
 
         var user = await _unitOfWork.UserRepository.GetAsync(id);
+        if (!await _unitOfWork.UserRepository.AnyAsync(id))
+        {
+            throw new UserNotFoundException($"User with id {id} not found");
+        }
+
         if (user == null) throw new UserNotFoundException($"User with id {id} not found");
 
         if (!await _unitOfWork.InventoryRepository.AnyAsync(user.InventoryId))
         {
             throw new InventoryNotFoundException($"Inventory with inventoryID {user.InventoryId} not found");
+        }
+        if (user.Name != userDto.Name)
+        {
+            var users = await _unitOfWork.UserRepository.GetAllAsync();
+            if (users.Any(u => u.Name == userDto.Name))
+            {
+                throw new UserFoundWithTheSameNameException("A user with the same name already exists.");
+            }
         }
 
         _mapper.Map(userDto, user);
@@ -123,6 +136,7 @@ public class UserService : IUserService
 
         var userToPatch = _mapper.Map<UserUpdateDTO>(user);
         patchDoc.ApplyTo(userToPatch);
+        
 
         _mapper.Map(userToPatch, user);
         _unitOfWork.UserRepository.Update(user);

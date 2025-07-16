@@ -24,13 +24,11 @@ public class InventoriesController : ControllerBase
     public async Task<IActionResult> GetInventories([FromQuery] InventoryRequestParams requestParams)
     {
         var inventories = await _service.InventoryService.GetInventoriesAsync(requestParams);
-
         Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(inventories.MetaData));
-
         return Ok(new
         {
             items = inventories.Items,
-            metaData = inventories.MetaData,
+            metaData = inventories.MetaData
         });
     }
 
@@ -44,22 +42,27 @@ public class InventoriesController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateInventory(InventoryCreateDTO inventory)
     {
+        
+        var createdInventory = await _service.InventoryService.CreateInventoryAsync(inventory);
+        TryValidateModel(createdInventory);
         if (!ModelState.IsValid)
         {
-            return BadRequest(ModelState);
+            return UnprocessableEntity(ModelState);
         }
-        var createdInventory = await _service.InventoryService.CreateInventoryAsync(inventory);
         return CreatedAtAction(nameof(GetInventory), new { id = createdInventory.Id }, createdInventory);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateInventory(int id, InventoryUpdateDTO inventory)
     {
+        
+
+        await _service.InventoryService.UpdateInventoryAsync(id, inventory);
+        TryValidateModel(inventory);
         if (!ModelState.IsValid)
         {
-            return BadRequest(ModelState);
+            return UnprocessableEntity(ModelState);
         }
-        await _service.InventoryService.UpdateInventoryAsync(id, inventory);
         return NoContent();
     }
 
@@ -73,6 +76,9 @@ public class InventoriesController : ControllerBase
     [HttpPatch("{inventoryId}")]
     public async Task<IActionResult> PatchInventory(int inventoryId, JsonPatchDocument<InventoryUpdateDTO> patchDoc)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         var inventory = await _service.InventoryService.PatchInventoryAsync(inventoryId, patchDoc);
         return Ok(inventory);
     }
