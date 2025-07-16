@@ -63,8 +63,6 @@ public class UserService : IUserService
 
     public async Task<UserDTO> CreateUserAsync(UserCreateDTO userDto)
     {
-
-
         var user = _mapper.Map<User>(userDto);
 
         if (!await _unitOfWork.InventoryRepository.AnyAsync(user.InventoryId))

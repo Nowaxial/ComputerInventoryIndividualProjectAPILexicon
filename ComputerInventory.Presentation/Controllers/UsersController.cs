@@ -60,6 +60,10 @@ public class UsersController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateUser(int id, UserUpdateDTO user)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
         await _service.UserService.UpdateUserAsync(id, user);
         return NoContent();
     }

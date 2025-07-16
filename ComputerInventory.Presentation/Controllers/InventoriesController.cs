@@ -41,7 +41,7 @@ public class InventoriesController : ControllerBase
     {
         if (!ModelState.IsValid)
         {
-            BadRequest(ModelState);
+            return BadRequest(ModelState);
         }
         var createdInventory = await _service.InventoryService.CreateInventoryAsync(inventory);
         return CreatedAtAction(nameof(GetInventory), new { id = createdInventory.Id }, createdInventory);
@@ -52,7 +52,7 @@ public class InventoriesController : ControllerBase
     {
         if (!ModelState.IsValid)
         {
-            BadRequest(ModelState);
+            return BadRequest(ModelState);
         }
         await _service.InventoryService.UpdateInventoryAsync(id, inventory);
         return NoContent();
