@@ -1,4 +1,5 @@
 ﻿using ComputerInventory.Core.DTOs;
+using ComputerInventory.Core.Entities;
 using ComputerInventory.Core.Request;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
@@ -26,7 +27,11 @@ public class InventoriesController : ControllerBase
 
         Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(inventories.MetaData));
 
-        return Ok(inventories);
+        return Ok(new
+        {
+            items = inventories.Items,
+            metaData = inventories.MetaData,
+        });
     }
 
     [HttpGet("{id}")]

@@ -26,7 +26,11 @@ public class UsersController : ControllerBase
 
         Response.Headers["X-Pagination"] = JsonSerializer.Serialize(users.MetaData);
 
-        return Ok(users);
+        return Ok(new
+        {
+            items = users.Items,
+            metaData = users.MetaData,
+        });
     }
 
     [HttpGet("{id}")]
