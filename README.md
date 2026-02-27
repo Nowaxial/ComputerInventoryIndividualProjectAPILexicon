@@ -6,6 +6,9 @@
 
 Ett robust REST-API byggt med **ASP.NET Core** för strukturerad hantering av IT-inventarier och hårdvarukomponenter. Projektet är designat för att lösa verkliga utmaningar inom **Asset Management**, såsom spårbarhet av serienummer, komponenthistorik och systemstatus.
 
+![API Picture](https://i.ibb.co/rK8cBzR2/Computer-Inventory-API.png)
+
+
 ## 🚀 Nyckelfunktioner för IT-drift
 
 API:et är optimerat för scenarier som liknar kommunal IT-förvaltning:
