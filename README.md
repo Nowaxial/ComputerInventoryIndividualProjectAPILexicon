@@ -60,4 +60,4 @@ Navigera till `https://localhost:XXXX/swagger` för att se de tillgängliga endp
 ---
 *Utvecklat som ett individuellt projekt under utbildningen till Systemutvecklare hos Lexicon.*
 
-```
+
