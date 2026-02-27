@@ -2,62 +2,71 @@
 
 [![.NET 9](https://img.shields.io/badge/.NET-9.0-512bd4.svg)](https://dotnet.microsoft.com/download)
 [![Entity Framework Core](https://img.shields.io/badge/EF%20Core-9.0-blue.svg)](https://learn.microsoft.com/en-us/ef/core/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Ett specialiserat REST-API för strukturerad hantering av IT-inventarier och hårdvarukomponenter. Projektet fokuserar på att spåra datorers livscykel, från specifikationer (CPU, RAM, Lagring) till deras nuvarande status och tilldelning.
+Ett robust REST-API byggt med **ASP.NET Core** för strukturerad hantering av IT-inventarier och hårdvarukomponenter. Projektet är designat för att lösa verkliga utmaningar inom **Asset Management**, såsom spårbarhet av serienummer, komponenthistorik och systemstatus.
 
-## 🚀 Huvudfunktioner
+## 🚀 Nyckelfunktioner för IT-drift
 
-- **Inventariehantering (Asset Tracking):** Kompletta CRUD-operationer för både datorer och enskilda hårdvarukomponenter.
-- **Relationsdatabas:** Automatiserad koppling mellan komponenter och specifika enheter via **Entity Framework Core**.
-- **Testdata-generering:** Använder biblioteket **Bogus** för att populera databasen med realistisk hårdvaruinformation vid utveckling.
-- **Interaktiv API-dokumentation:** Integrerad **Swagger (OpenAPI)** för enkel testning och utforskning av endpoints.
-- **Hårdvaruspecifikationer:** Detaljerad loggning av serienummer, modeller och prestandaparametrar.
+API:et är optimerat för scenarier som liknar kommunal IT-förvaltning:
+- **Fullständig Inventariehantering (CRUD):** Hantering av datorer (laptops/desktops) och tillhörande komponenter (CPU, RAM, Lagring).
+- **Hårdvaruspecifikationer:** Detaljerad spårning av modeller, serienummer och konfigurationer.
+- **Relationsdatabas:** Arkitektur som kopplar samman komponenter med specifika enheter via Entity Framework Core.
+- **Säker Dataåtkomst:** Validering av indata för att säkerställa dataintegritet vid registrering av ny utrustning.
+- **Interaktiv Dokumentation:** Inbyggt stöd för **Swagger/OpenAPI** för enkel testning av endpoints.
 
 ## 🛠 Teknisk Stack
 
-- **Framework:** ASP.NET Core Web API (.NET 9)
-- **Datalager:** Entity Framework Core (Code First)
-- **Databas:** Microsoft SQL Server (LocalDB)
-- **Data Seed:** Bogus (för stress-testning och utveckling)
-- **Verktyg:** Swagger UI, LINQ
+- **Backend:** .NET 9 / ASP.NET Core Web API
+- **ORM:** Entity Framework Core (Code First)
+- **Databas:** Microsoft SQL Server (LocalDB för enkel utveckling)
+- **Arkitektur:** Clean separation mellan Models, Data och Controllers
+- **Verktyg:** Bogus (för generering av testdata), Swagger UI
 
-## 📂 Projektets Struktur
+## 📁 Projektstruktur
 
-Projektet följer en tydlig separation av ansvarsområden:
-- **Controllers:** Hanterar inkommande HTTP-anrop och affärslogik för `Computers` och `Components`.
-- **Data:** Innehåller `ComputerInventoryContext` och konfiguration för databasinitiering.
-- **Models:** Domänmodeller som definierar entiteterna `Computer`, `Component` och `Type`.
+```text
+├── Controllers/         # API-endpoints för Computers och Components
+├── Data/                # DbContext och databasinitiering
+├── Models/              # Domänmodeller (Computer, Component, Type)
+├── Migrations/          # Entity Framework-versionering
+└── Program.cs           # Konfiguration av tjänster och middleware
+```
+
 
 ## 🏁 Kom igång
 
-1. **Klona arkivet:**
-   ```bash
-   git clone https://github.com/Nowaxial/ComputerInventoryIndividualProjectAPILexicon.git
-   ```
-  
+1. **Klona repot:**
 
-2. **Initiera databasen:**
-Kör följande kommando i Package Manager Console:
-  ```bash
-  Update-Database
-  ```
+```bash
+git clone https://github.com/Nowaxial/ComputerInventoryIndividualProjectAPILexicon.git
+```
 
-3. **Kör projektet:**
-Starta via Visual Studio eller CLI:
-  ```bash
-  dotnet run
-  ```
+2. **Uppdatera databasen:**
+Kör följande i Package Manager Console:
 
-4. **Utforska API:et:**
-Navigera till `https://localhost:XXXX/swagger` för att se de tillgängliga endpoints.
+```powershell
+Update-Database
+```
 
-## 🛡 Säkerhet \& Designmönster
+3. **Kör applikationen:**
+Starta projektet via Visual Studio eller CLI:
 
-- **Clean Code:** Starkt typade modeller och LINQ-frågor för säker datahantering.
-- **Resiliens:** Inbyggd logik för att hantera saknad hårdvaruinformation och validering av indata.
-- **Skalbarhet:** Arkitekturen är förberedd för att flyttas till molnmiljöer som **Microsoft Azure**.
+```bash
+dotnet run
+```
+
+4. **Testa API:et:**
+Öppna din webbläsare på `https://localhost:XXXX/swagger` för att se dokumentationen.
+
+## 🛡 Säkerhet \& Kvalitet
+
+Projektet följer moderna principer för säker webbutveckling:
+
+- **Separation of Concerns:** Tydlig uppdelning mellan datalager och API-logik.
+- **Typad Data:** Minimering av fel genom starkt typade modeller.
+- **Skalbarhet:** Förberett för integration med molntjänster som Azure SQL Database.
 
 ---
-*Utvecklat som ett individuellt projekt under utbildningen till Systemutvecklare hos Lexicon.*
-
+*Detta projekt utvecklades som en del av min certifiering till Systemutvecklare hos Lexicon, med fokus på att skapa verksamhetsnytta genom modern .NET-teknik.*
 
